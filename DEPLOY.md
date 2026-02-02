@@ -62,7 +62,7 @@ https://你的用户名.github.io/wangli-blog/
   excerpt: '文章摘要，100-150字左右...',
   category: 'javascript',  // 分类：javascript/react/vue/css/other
   tags: ['标签1', '标签2'],
-  date: '2024-03-01',  // 发布日期
+  date: '2026-02-02',  // 发布日期
   cover: '',  // 封面图URL（可选）
   url: 'posts/your-article.html'  // 文章页面路径
 }
