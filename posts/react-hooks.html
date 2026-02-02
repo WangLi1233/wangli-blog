@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>React Hooks 完全指南 - 王力的博客日志</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+</head>
+<body>
+  <!-- 导航栏 -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="../index.html" class="logo">
+        <span class="logo-icon">W</span>
+        <span class="logo-text">王力的博客日志</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="../index.html">首页</a></li>
+        <li><a href="../categories.html">分类</a></li>
+        <li><a href="../about.html">关于我</a></li>
+        <li><a href="https://github.com" target="_blank">GitHub</a></li>
+      </ul>
+      <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- 移动端菜单 -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="../index.html">首页</a>
+    <a href="../categories.html">分类</a>
+    <a href="../about.html">关于我</a>
+    <a href="https://github.com" target="_blank">GitHub</a>
+  </div>
+
+  <!-- 文章头部 -->
+  <header class="article-header">
+    <h1>React Hooks 完全指南</h1>
+    <div class="article-header-meta">
+      <span>2024-01-20</span>
+      <span>React</span>
+      <span>阅读约 15 分钟</span>
+    </div>
+  </header>
+
+  <!-- 文章内容 -->
+  <main class="article-content-wrapper">
+    <article class="article-content">
+      <h2>什么是 React Hooks？</h2>
+      <p>
+        React Hooks 是 React 16.8 引入的新特性，它让你在不编写 class 的情况下使用 state 以及其他的 React 特性。
+        Hooks 使得函数组件拥有了 class 组件的能力，同时代码更加简洁和易于理解。
+      </p>
+
+      <h2>useState - 状态管理</h2>
+      <p><code>useState</code> 是最基础的 Hook，用于在函数组件中添加状态：</p>
+
+      <pre><code class="language-javascript">import { useState } from 'react';
+
+function Counter() {
+  // 声明一个名为 count 的状态变量，初始值为 0
+  const [count, setCount] = useState(0);
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;You clicked {count} times&lt;/p&gt;
+      &lt;button onClick={() => setCount(count + 1)}&gt;
+        Click me
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+
+      <h3>useState 进阶用法</h3>
+      <pre><code class="language-javascript">// 1. 函数式更新（基于前一个状态）
+setCount(prevCount => prevCount + 1);
+
+// 2. 惰性初始化（复杂计算只在首次渲染执行）
+const [state, setState] = useState(() => {
+  const initialState = someExpensiveComputation();
+  return initialState;
+});
+
+// 3. 对象状态更新（需要展开原有状态）
+const [user, setUser] = useState({ name: '', age: 0 });
+setUser(prev => ({ ...prev, name: 'Wang Li' }));</code></pre>
+
+      <h2>useEffect - 副作用处理</h2>
+      <p>
+        <code>useEffect</code> 用于处理副作用，如数据获取、订阅、手动修改 DOM 等：
+      </p>
+
+      <pre><code class="language-javascript">import { useState, useEffect } from 'react';
+
+function UserProfile({ userId }) {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // 副作用：获取用户数据
+    async function fetchUser() {
+      setLoading(true);
+      const response = await fetch(`/api/users/${userId}`);
+      const data = await response.json();
+      setUser(data);
+      setLoading(false);
+    }
+
+    fetchUser();
+
+    // 清理函数（可选）
+    return () => {
+      // 组件卸载或依赖变化时执行
+      console.log('cleanup');
+    };
+  }, [userId]); // 依赖数组
+
+  if (loading) return &lt;div&gt;Loading...&lt;/div&gt;;
+  return &lt;div&gt;{user?.name}&lt;/div&gt;;
+}</code></pre>
+
+      <h3>useEffect 依赖数组规则</h3>
+      <ul>
+        <li><strong>空数组 <code>[]</code></strong>：只在组件挂载时执行一次</li>
+        <li><strong>有依赖</strong>：依赖变化时重新执行</li>
+        <li><strong>不传数组</strong>：每次渲染都执行（慎用）</li>
+      </ul>
+
+      <h2>useContext - 跨组件通信</h2>
+      <p>
+        <code>useContext</code> 让你不必通过组件层层传递 props，就能访问上下文数据：
+      </p>
+
+      <pre><code class="language-javascript">import { createContext, useContext, useState } from 'react';
+
+// 1. 创建 Context
+const ThemeContext = createContext('light');
+
+// 2. 提供 Context
+function App() {
+  const [theme, setTheme] = useState('light');
+
+  return (
+    &lt;ThemeContext.Provider value={{ theme, setTheme }}&gt;
+      &lt;Header /&gt;
+      &lt;Main /&gt;
+    &lt;/ThemeContext.Provider&gt;
+  );
+}
+
+// 3. 使用 Context
+function ThemeButton() {
+  const { theme, setTheme } = useContext(ThemeContext);
+
+  return (
+    &lt;button onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}&gt;
+      当前主题: {theme}
+    &lt;/button&gt;
+  );
+}</code></pre>
+
+      <h2>useRef - 获取 DOM 引用</h2>
+      <p>
+        <code>useRef</code> 返回一个可变的 ref 对象，在组件的整个生命周期内保持不变：
+      </p>
+
+      <pre><code class="language-javascript">import { useRef, useEffect } from 'react';
+
+function TextInput() {
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    // 组件挂载后自动聚焦
+    inputRef.current.focus();
+  }, []);
+
+  return &lt;input ref={inputRef} type="text" /&gt;;
+}
+
+// 保存任意可变值（不会触发重新渲染）
+function Timer() {
+  const countRef = useRef(0);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      countRef.current += 1;
+      console.log(countRef.current);
+    }, 1000);
+
+    return () => clearInterval(id);
+  }, []);
+}</code></pre>
+
+      <h2>useMemo 和 useCallback - 性能优化</h2>
+
+      <h3>useMemo - 缓存计算结果</h3>
+      <pre><code class="language-javascript">import { useMemo } from 'react';
+
+function ExpensiveList({ items, filter }) {
+  // 只有当 items 或 filter 变化时才重新计算
+  const filteredItems = useMemo(() => {
+    console.log('Filtering...');
+    return items.filter(item => item.includes(filter));
+  }, [items, filter]);
+
+  return (
+    &lt;ul&gt;
+      {filteredItems.map(item => &lt;li key={item}&gt;{item}&lt;/li&gt;)}
+    &lt;/ul&gt;
+  );
+}</code></pre>
+
+      <h3>useCallback - 缓存函数引用</h3>
+      <pre><code class="language-javascript">import { useCallback, memo } from 'react';
+
+// 子组件使用 memo 包裹，避免不必要的重新渲染
+const Button = memo(({ onClick, children }) => {
+  console.log('Button rendered');
+  return &lt;button onClick={onClick}&gt;{children}&lt;/button&gt;;
+});
+
+function Parent() {
+  const [count, setCount] = useState(0);
+
+  // 使用 useCallback 缓存函数，避免每次渲染创建新函数
+  const handleClick = useCallback(() => {
+    console.log('Button clicked');
+  }, []); // 空依赖，函数引用永远不变
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Count: {count}&lt;/p&gt;
+      &lt;button onClick={() => setCount(c => c + 1)}&gt;Increment&lt;/button&gt;
+      &lt;Button onClick={handleClick}&gt;Click me&lt;/Button&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+
+      <h2>自定义 Hook</h2>
+      <p>
+        自定义 Hook 是一种复用状态逻辑的方式。以 <code>use</code> 开头的函数就是自定义 Hook：
+      </p>
+
+      <pre><code class="language-javascript">// 自定义 Hook: 处理表单输入
+function useInput(initialValue) {
+  const [value, setValue] = useState(initialValue);
+
+  const handleChange = (e) => {
+    setValue(e.target.value);
+  };
+
+  const reset = () => {
+    setValue(initialValue);
+  };
+
+  return {
+    value,
+    onChange: handleChange,
+    reset
+  };
+}
+
+// 使用自定义 Hook
+function LoginForm() {
+  const username = useInput('');
+  const password = useInput('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(username.value, password.value);
+    username.reset();
+    password.reset();
+  };
+
+  return (
+    &lt;form onSubmit={handleSubmit}&gt;
+      &lt;input {...username} placeholder="Username" /&gt;
+      &lt;input {...password} type="password" placeholder="Password" /&gt;
+      &lt;button type="submit"&gt;Login&lt;/button&gt;
+    &lt;/form&gt;
+  );
+}</code></pre>
+
+      <h2>Hooks 使用规则</h2>
+      <blockquote>
+        <p><strong>1. 只在最顶层使用 Hooks</strong>：不要在循环、条件或嵌套函数中调用 Hook。</p>
+        <p><strong>2. 只在 React 函数中调用 Hooks</strong>：在函数组件或自定义 Hook 中使用。</p>
+      </blockquote>
+
+      <h2>总结</h2>
+      <p>
+        React Hooks 让函数组件变得更加强大和灵活。通过 <code>useState</code>、<code>useEffect</code>、
+        <code>useContext</code> 等 Hooks，我们可以在函数组件中实现状态管理、副作用处理和跨组件通信。
+        合理使用 <code>useMemo</code> 和 <code>useCallback</code> 可以优化性能，而自定义 Hook 则让代码复用变得更加简单。
+      </p>
+
+      <div class="article-tags-section">
+        <h4>文章标签</h4>
+        <div class="tags">
+          <span class="tag">React</span>
+          <span class="tag">Hooks</span>
+          <span class="tag">前端框架</span>
+          <span class="tag">状态管理</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- 文章导航 -->
+    <div style="display: flex; justify-content: space-between; margin-top: 30px;">
+      <a href="javascript-closure.html" style="color: var(--primary);">← 上一篇: JavaScript 闭包详解</a>
+      <a href="vue3-composition-api.html" style="color: var(--primary);">下一篇: Vue 3 组合式 API →</a>
+    </div>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-info">
+          <h3>王力的博客日志</h3>
+          <p>记录学习，分享知识，共同进步</p>
+        </div>
+        <div class="footer-links">
+          <a href="../index.html">首页</a>
+          <a href="../categories.html">分类</a>
+          <a href="../about.html">关于</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 王力的博客日志. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 回到顶部 -->
+  <button class="back-to-top" id="backToTop" onclick="scrollToTop()">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+      <path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/>
+    </svg>
+  </button>
+
+  <script src="../js/main.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+</body>
+</html>

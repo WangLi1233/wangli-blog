@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文章分类 - 王力的博客日志</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- 导航栏 -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">W</span>
+        <span class="logo-text">王力的博客日志</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html">首页</a></li>
+        <li><a href="categories.html" class="active">分类</a></li>
+        <li><a href="about.html">关于我</a></li>
+        <li><a href="https://github.com" target="_blank">GitHub</a></li>
+      </ul>
+      <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- 移动端菜单 -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">首页</a>
+    <a href="categories.html">分类</a>
+    <a href="about.html">关于我</a>
+    <a href="https://github.com" target="_blank">GitHub</a>
+  </div>
+
+  <!-- 页面头部 -->
+  <header class="page-header">
+    <h1>文章分类</h1>
+    <p>按技术栈分类浏览文章</p>
+  </header>
+
+  <!-- 分类列表 -->
+  <main class="main-content">
+    <div class="container">
+      <div class="categories-grid" id="categoriesGrid">
+        <!-- 动态加载 -->
+      </div>
+
+      <!-- 分类下的文章 -->
+      <section class="articles-section" id="categoryArticles" style="display: none; margin-top: 60px;">
+        <div class="section-header">
+          <h2 id="categoryTitle">分类文章</h2>
+          <button class="filter-btn" onclick="showAllCategories()">返回全部分类</button>
+        </div>
+        <div class="articles-grid" id="categoryArticlesGrid">
+          <!-- 动态加载 -->
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-info">
+          <h3>王力的博客日志</h3>
+          <p>记录学习，分享知识，共同进步</p>
+        </div>
+        <div class="footer-links">
+          <a href="index.html">首页</a>
+          <a href="categories.html">分类</a>
+          <a href="about.html">关于</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 王力的博客日志. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 回到顶部 -->
+  <button class="back-to-top" id="backToTop" onclick="scrollToTop()">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+      <path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/>
+    </svg>
+  </button>
+
+  <script src="js/articles.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    // 分类页面特有逻辑
+    document.addEventListener('DOMContentLoaded', function() {
+      renderCategoriesPage();
+      checkHashAndShowCategory();
+      initScrollListener();
+    });
+
+    // 监听 hash 变化
+    window.addEventListener('hashchange', function() {
+      checkHashAndShowCategory();
+    });
+
+    function renderCategoriesPage() {
+      const grid = document.getElementById('categoriesGrid');
+      if (!grid) return;
+
+      const stats = getCategoryStats();
+
+      grid.innerHTML = getAllCategories().map(category => {
+        const count = stats[category.id] || 0;
+        return `
+          <div class="category-card" onclick="showCategoryArticles('${category.id}')">
+            <div class="category-card-icon">${category.icon}</div>
+            <h3>${category.name}</h3>
+            <p>${category.description}</p>
+            <span class="article-count">${count} 篇文章</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function checkHashAndShowCategory() {
+      const hash = window.location.hash.slice(1);
+      if (hash) {
+        showCategoryArticles(hash);
+      }
+    }
+
+    function showCategoryArticles(categoryId) {
+      const category = getAllCategories().find(c => c.id === categoryId);
+      if (!category) return;
+
+      // 隐藏分类卡片，显示文章列表
+      document.getElementById('categoriesGrid').style.display = 'none';
+      document.getElementById('categoryArticles').style.display = 'block';
+      document.getElementById('categoryTitle').textContent = category.name + ' 文章';
+
+      // 渲染该分类下的文章
+      const articles = getArticlesByCategory(categoryId);
+      const grid = document.getElementById('categoryArticlesGrid');
+
+      if (articles.length === 0) {
+        grid.innerHTML = '<p style="text-align: center; color: var(--gray); padding: 40px;">该分类暂无文章</p>';
+      } else {
+        grid.innerHTML = articles.map(article => createArticleCard(article)).join('');
+      }
+
+      // 更新 URL hash
+      window.location.hash = categoryId;
+    }
+
+    function showAllCategories() {
+      document.getElementById('categoriesGrid').style.display = 'grid';
+      document.getElementById('categoryArticles').style.display = 'none';
+      window.location.hash = '';
+    }
+  </script>
+</body>
+</html>

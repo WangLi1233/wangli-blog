@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>王力的博客日志 - 前端技术分享</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+</head>
+<body>
+  <!-- 导航栏 -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">W</span>
+        <span class="logo-text">王力的博客日志</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html" class="active">首页</a></li>
+        <li><a href="categories.html">分类</a></li>
+        <li><a href="about.html">关于我</a></li>
+        <li><a href="https://github.com" target="_blank">GitHub</a></li>
+      </ul>
+      <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- 移动端菜单 -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">首页</a>
+    <a href="categories.html">分类</a>
+    <a href="about.html">关于我</a>
+    <a href="https://github.com" target="_blank">GitHub</a>
+  </div>
+
+  <!-- 头部横幅 -->
+  <header class="hero">
+    <div class="hero-content">
+      <h1>王力的博客日志</h1>
+      <p>专注前端技术 · 原生JS · React · Vue · 持续学习与分享</p>
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-num" id="articleCount">0</span>
+          <span class="stat-label">篇文章</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num" id="categoryCount">0</span>
+          <span class="stat-label">个分类</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num" id="tagCount">0</span>
+          <span class="stat-label">个标签</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主要内容 -->
+  <main class="main-content">
+    <div class="container">
+      <div class="content-wrapper">
+        <!-- 文章列表 -->
+        <section class="articles-section">
+          <div class="section-header">
+            <h2>最新文章</h2>
+            <div class="filter-tabs">
+              <button class="filter-btn active" data-filter="all">全部</button>
+              <button class="filter-btn" data-filter="javascript">JavaScript</button>
+              <button class="filter-btn" data-filter="react">React</button>
+              <button class="filter-btn" data-filter="vue">Vue</button>
+            </div>
+          </div>
+          <div class="articles-grid" id="articlesGrid">
+            <!-- 文章卡片将通过JS动态加载 -->
+          </div>
+        </section>
+
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+          <!-- 作者信息 -->
+          <div class="widget author-widget">
+            <div class="author-avatar">
+              <div class="avatar-placeholder">王</div>
+            </div>
+            <h3>王力</h3>
+            <p class="author-bio">前端开发工程师，热爱技术，乐于分享</p>
+            <div class="author-social">
+              <a href="#" title="GitHub">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                  <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.335-1.755-1.335-1.755-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12"/>
+                </svg>
+              </a>
+              <a href="#" title="邮箱">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                  <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- 分类 -->
+          <div class="widget">
+            <h3 class="widget-title">文章分类</h3>
+            <ul class="category-list" id="categoryList">
+              <!-- 动态加载 -->
+            </ul>
+          </div>
+
+          <!-- 标签云 -->
+          <div class="widget">
+            <h3 class="widget-title">热门标签</h3>
+            <div class="tag-cloud" id="tagCloud">
+              <!-- 动态加载 -->
+            </div>
+          </div>
+
+          <!-- 友情链接 -->
+          <div class="widget">
+            <h3 class="widget-title">友情链接</h3>
+            <ul class="link-list">
+              <li><a href="https://developer.mozilla.org" target="_blank">MDN Web Docs</a></li>
+              <li><a href="https://react.dev" target="_blank">React 官网</a></li>
+              <li><a href="https://vuejs.org" target="_blank">Vue.js 官网</a></li>
+              <li><a href="https://javascript.info" target="_blank">现代 JavaScript 教程</a></li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-info">
+          <h3>王力的博客日志</h3>
+          <p>记录学习，分享知识，共同进步</p>
+        </div>
+        <div class="footer-links">
+          <a href="index.html">首页</a>
+          <a href="categories.html">分类</a>
+          <a href="about.html">关于</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 王力的博客日志. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 回到顶部 -->
+  <button class="back-to-top" id="backToTop" onclick="scrollToTop()">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+      <path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/>
+    </svg>
+  </button>
+
+  <script src="js/articles.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vue 3 组合式 API 入门与实践 - 王力的博客日志</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+</head>
+<body>
+  <!-- 导航栏 -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="../index.html" class="logo">
+        <span class="logo-icon">W</span>
+        <span class="logo-text">王力的博客日志</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="../index.html">首页</a></li>
+        <li><a href="../categories.html">分类</a></li>
+        <li><a href="../about.html">关于我</a></li>
+        <li><a href="https://github.com" target="_blank">GitHub</a></li>
+      </ul>
+      <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- 移动端菜单 -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="../index.html">首页</a>
+    <a href="../categories.html">分类</a>
+    <a href="../about.html">关于我</a>
+    <a href="https://github.com" target="_blank">GitHub</a>
+  </div>
+
+  <!-- 文章头部 -->
+  <header class="article-header">
+    <h1>Vue 3 组合式 API 入门与实践</h1>
+    <div class="article-header-meta">
+      <span>2024-01-25</span>
+      <span>Vue</span>
+      <span>阅读约 12 分钟</span>
+    </div>
+  </header>
+
+  <!-- 文章内容 -->
+  <main class="article-content-wrapper">
+    <article class="article-content">
+      <h2>什么是组合式 API？</h2>
+      <p>
+        Vue 3 的组合式 API（Composition API）是一种新的编写组件逻辑的方式。
+        相比于 Vue 2 的选项式 API（Options API），组合式 API 提供了更灵活的代码组织方式，
+        使得逻辑复用和代码组织变得更加容易。
+      </p>
+
+      <h2>setup 函数</h2>
+      <p><code>setup</code> 是组合式 API 的入口点：</p>
+
+      <pre><code class="language-javascript">&lt;script&gt;
+import { ref, reactive, computed, onMounted } from 'vue'
+
+export default {
+  setup() {
+    // 响应式数据
+    const count = ref(0)
+    const user = reactive({
+      name: 'Wang Li',
+      age: 25
+    })
+
+    // 方法
+    const increment = () => {
+      count.value++
+    }
+
+    // 计算属性
+    const doubleCount = computed(() => count.value * 2)
+
+    // 生命周期
+    onMounted(() => {
+      console.log('组件已挂载')
+    })
+
+    // 返回给模板使用
+    return {
+      count,
+      user,
+      increment,
+      doubleCount
+    }
+  }
+}
+&lt;/script&gt;</code></pre>
+
+      <h2>script setup 语法糖</h2>
+      <p>Vue 3.2+ 提供了更简洁的 <code>&lt;script setup&gt;</code> 语法：</p>
+
+      <pre><code class="language-javascript">&lt;script setup&gt;
+import { ref, reactive, computed, onMounted } from 'vue'
+
+// 直接声明，无需 return
+const count = ref(0)
+const user = reactive({
+  name: 'Wang Li',
+  age: 25
+})
+
+const increment = () => {
+  count.value++
+}
+
+const doubleCount = computed(() => count.value * 2)
+
+onMounted(() => {
+  console.log('组件已挂载')
+})
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;div&gt;
+    &lt;p&gt;Count: {{ count }}&lt;/p&gt;
+    &lt;p&gt;Double: {{ doubleCount }}&lt;/p&gt;
+    &lt;p&gt;Name: {{ user.name }}&lt;/p&gt;
+    &lt;button @click="increment"&gt;+1&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/template&gt;</code></pre>
+
+      <h2>ref vs reactive</h2>
+      <h3>ref - 基本类型响应式</h3>
+      <pre><code class="language-javascript">import { ref } from 'vue'
+
+// 基本类型
+const count = ref(0)
+const message = ref('Hello')
+
+// 访问/修改需要 .value
+count.value++
+console.log(count.value) // 1
+
+// 在模板中自动解包，无需 .value
+// &lt;p&gt;{{ count }}&lt;/p&gt;</code></pre>
+
+      <h3>reactive - 对象类型响应式</h3>
+      <pre><code class="language-javascript">import { reactive } from 'vue'
+
+const state = reactive({
+  count: 0,
+  user: {
+    name: 'Wang Li',
+    skills: ['JavaScript', 'Vue', 'React']
+  }
+})
+
+// 直接访问，无需 .value
+state.count++
+state.user.name = 'Li Ming'
+state.user.skills.push('TypeScript')</code></pre>
+
+      <h2>watch 和 watchEffect</h2>
+
+      <h3>watch - 精确监听</h3>
+      <pre><code class="language-javascript">import { ref, watch } from 'vue'
+
+const count = ref(0)
+const name = ref('Wang Li')
+
+// 监听单个 ref
+watch(count, (newVal, oldVal) => {
+  console.log(`count: ${oldVal} -> ${newVal}`)
+})
+
+// 监听多个
+watch([count, name], ([newCount, newName], [oldCount, oldName]) => {
+  console.log('count or name changed')
+})
+
+// 立即执行
+watch(count, (newVal) => {
+  console.log(newVal)
+}, { immediate: true })
+
+// 深度监听
+const user = reactive({ info: { name: 'Wang Li' } })
+watch(() => user.info, (newVal) => {
+  console.log('info changed')
+}, { deep: true })</code></pre>
+
+      <h3>watchEffect - 自动依赖收集</h3>
+      <pre><code class="language-javascript">import { ref, watchEffect } from 'vue'
+
+const count = ref(0)
+const name = ref('Wang Li')
+
+// 自动追踪依赖
+watchEffect(() => {
+  console.log(`count: ${count.value}, name: ${name.value}`)
+})
+
+// count 或 name 变化时自动执行</code></pre>
+
+      <h2>生命周期钩子</h2>
+      <pre><code class="language-javascript">import {
+  onBeforeMount,
+  onMounted,
+  onBeforeUpdate,
+  onUpdated,
+  onBeforeUnmount,
+  onUnmounted
+} from 'vue'
+
+// 在 setup 中使用
+onMounted(() => {
+  console.log('mounted')
+})
+
+onUnmounted(() => {
+  console.log('unmounted - 清理资源')
+})</code></pre>
+
+      <h2>组合式函数（Composables）</h2>
+      <p>组合式 API 的核心优势是逻辑复用：</p>
+
+      <pre><code class="language-javascript">// composables/useMouse.js
+import { ref, onMounted, onUnmounted } from 'vue'
+
+export function useMouse() {
+  const x = ref(0)
+  const y = ref(0)
+
+  function update(event) {
+    x.value = event.pageX
+    y.value = event.pageY
+  }
+
+  onMounted(() => window.addEventListener('mousemove', update))
+  onUnmounted(() => window.removeEventListener('mousemove', update))
+
+  return { x, y }
+}
+
+// 在组件中使用
+&lt;script setup&gt;
+import { useMouse } from './composables/useMouse'
+
+const { x, y } = useMouse()
+&lt;/script&gt;
+
+&lt;template&gt;
+  Mouse position: {{ x }}, {{ y }}
+&lt;/template&gt;</code></pre>
+
+      <h2>provide / inject</h2>
+      <p>跨层级组件通信：</p>
+
+      <pre><code class="language-javascript">// 父组件
+&lt;script setup&gt;
+import { provide, ref } from 'vue'
+
+const theme = ref('dark')
+provide('theme', theme)  // 提供响应式数据
+provide('changeTheme', (val) => theme.value = val)
+&lt;/script&gt;
+
+// 子孙组件
+&lt;script setup&gt;
+import { inject } from 'vue'
+
+const theme = inject('theme')
+const changeTheme = inject('changeTheme')
+&lt;/script&gt;</code></pre>
+
+      <h2>总结</h2>
+      <blockquote>
+        <p>
+          Vue 3 组合式 API 提供了更灵活的代码组织方式，通过 <code>ref</code>、<code>reactive</code>
+          实现响应式数据，通过组合式函数实现逻辑复用。结合 <code>&lt;script setup&gt;</code> 语法糖，
+          可以编写更加简洁和易于维护的 Vue 组件。
+        </p>
+      </blockquote>
+
+      <div class="article-tags-section">
+        <h4>文章标签</h4>
+        <div class="tags">
+          <span class="tag">Vue</span>
+          <span class="tag">Vue3</span>
+          <span class="tag">组合式API</span>
+          <span class="tag">前端框架</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- 文章导航 -->
+    <div style="display: flex; justify-content: space-between; margin-top: 30px;">
+      <a href="react-hooks.html" style="color: var(--primary);">← 上一篇: React Hooks 完全指南</a>
+      <a href="../index.html" style="color: var(--primary);">返回首页 →</a>
+    </div>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-info">
+          <h3>王力的博客日志</h3>
+          <p>记录学习，分享知识，共同进步</p>
+        </div>
+        <div class="footer-links">
+          <a href="../index.html">首页</a>
+          <a href="../categories.html">分类</a>
+          <a href="../about.html">关于</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 王力的博客日志. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/main.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+</body>
+</html>

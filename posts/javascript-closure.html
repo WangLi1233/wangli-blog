@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JavaScript 闭包详解：从原理到实践 - 王力的博客日志</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+</head>
+<body>
+  <!-- 导航栏 -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="../index.html" class="logo">
+        <span class="logo-icon">W</span>
+        <span class="logo-text">王力的博客日志</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="../index.html">首页</a></li>
+        <li><a href="../categories.html">分类</a></li>
+        <li><a href="../about.html">关于我</a></li>
+        <li><a href="https://github.com" target="_blank">GitHub</a></li>
+      </ul>
+      <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- 移动端菜单 -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="../index.html">首页</a>
+    <a href="../categories.html">分类</a>
+    <a href="../about.html">关于我</a>
+    <a href="https://github.com" target="_blank">GitHub</a>
+  </div>
+
+  <!-- 文章头部 -->
+  <header class="article-header">
+    <h1>JavaScript 闭包详解：从原理到实践</h1>
+    <div class="article-header-meta">
+      <span>2024-01-15</span>
+      <span>JavaScript</span>
+      <span>阅读约 10 分钟</span>
+    </div>
+  </header>
+
+  <!-- 文章内容 -->
+  <main class="article-content-wrapper">
+    <article class="article-content">
+      <h2>什么是闭包？</h2>
+      <p>
+        闭包（Closure）是 JavaScript 中最重要也是最容易让人困惑的概念之一。
+        简单来说，<strong>闭包是指有权访问另一个函数作用域中变量的函数</strong>。
+      </p>
+      <p>
+        当一个函数在其词法作用域之外执行时，仍然能够访问其词法作用域中的变量，这就形成了闭包。
+      </p>
+
+      <h2>闭包的基本示例</h2>
+      <p>让我们通过一个简单的例子来理解闭包：</p>
+
+      <pre><code class="language-javascript">function outer() {
+  const message = 'Hello, Closure!';
+
+  function inner() {
+    console.log(message); // inner 函数可以访问 outer 函数中的变量
+  }
+
+  return inner;
+}
+
+const sayHello = outer();
+sayHello(); // 输出: Hello, Closure!</code></pre>
+
+      <p>
+        在这个例子中，<code>inner</code> 函数形成了一个闭包。即使 <code>outer</code> 函数已经执行完毕，
+        <code>inner</code> 函数仍然可以访问 <code>message</code> 变量。
+      </p>
+
+      <h2>闭包的实际应用</h2>
+
+      <h3>1. 数据私有化</h3>
+      <p>闭包可以用来创建私有变量，实现数据封装：</p>
+
+      <pre><code class="language-javascript">function createCounter() {
+  let count = 0; // 私有变量
+
+  return {
+    increment() {
+      count++;
+      return count;
+    },
+    decrement() {
+      count--;
+      return count;
+    },
+    getCount() {
+      return count;
+    }
+  };
+}
+
+const counter = createCounter();
+console.log(counter.increment()); // 1
+console.log(counter.increment()); // 2
+console.log(counter.decrement()); // 1
+console.log(counter.getCount());  // 1
+// count 变量无法直接访问，实现了私有化</code></pre>
+
+      <h3>2. 函数工厂</h3>
+      <p>使用闭包创建定制化的函数：</p>
+
+      <pre><code class="language-javascript">function createMultiplier(multiplier) {
+  return function(number) {
+    return number * multiplier;
+  };
+}
+
+const double = createMultiplier(2);
+const triple = createMultiplier(3);
+
+console.log(double(5));  // 10
+console.log(triple(5));  // 15</code></pre>
+
+      <h3>3. 防抖函数</h3>
+      <p>闭包在防抖和节流函数中的应用：</p>
+
+      <pre><code class="language-javascript">function debounce(fn, delay) {
+  let timer = null; // 通过闭包保存 timer
+
+  return function(...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      fn.apply(this, args);
+    }, delay);
+  };
+}
+
+// 使用
+const handleSearch = debounce(function(keyword) {
+  console.log('搜索:', keyword);
+}, 300);
+
+// 快速连续调用，只会执行最后一次
+handleSearch('J');
+handleSearch('Ja');
+handleSearch('Jav');
+handleSearch('Java');
+handleSearch('JavaS');
+handleSearch('JavaScript'); // 只有这次会执行</code></pre>
+
+      <h2>闭包的注意事项</h2>
+
+      <h3>内存泄漏</h3>
+      <p>
+        由于闭包会保持对外部变量的引用，如果使用不当可能会造成内存泄漏。
+        当不再需要使用闭包时，应该及时解除引用。
+      </p>
+
+      <pre><code class="language-javascript">function createHeavyObject() {
+  const largeData = new Array(1000000).fill('data');
+
+  return function() {
+    return largeData.length;
+  };
+}
+
+let getLength = createHeavyObject();
+console.log(getLength()); // 1000000
+
+// 不再需要时，解除引用
+getLength = null;</code></pre>
+
+      <h3>循环中的闭包问题</h3>
+      <p>这是一个经典的面试题：</p>
+
+      <pre><code class="language-javascript">// 问题代码
+for (var i = 0; i < 3; i++) {
+  setTimeout(function() {
+    console.log(i);
+  }, 1000);
+}
+// 输出: 3, 3, 3（而不是 0, 1, 2）
+
+// 解决方案 1: 使用 let
+for (let i = 0; i < 3; i++) {
+  setTimeout(function() {
+    console.log(i);
+  }, 1000);
+}
+// 输出: 0, 1, 2
+
+// 解决方案 2: 使用闭包
+for (var i = 0; i < 3; i++) {
+  (function(j) {
+    setTimeout(function() {
+      console.log(j);
+    }, 1000);
+  })(i);
+}
+// 输出: 0, 1, 2</code></pre>
+
+      <h2>总结</h2>
+      <blockquote>
+        <p>
+          闭包是 JavaScript 中强大而灵活的特性，理解闭包对于编写高质量的 JavaScript 代码至关重要。
+          合理使用闭包可以实现数据私有化、函数工厂等模式，但也要注意避免内存泄漏等问题。
+        </p>
+      </blockquote>
+
+      <div class="article-tags-section">
+        <h4>文章标签</h4>
+        <div class="tags">
+          <span class="tag">JavaScript</span>
+          <span class="tag">闭包</span>
+          <span class="tag">面试</span>
+          <span class="tag">前端基础</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- 文章导航 -->
+    <div style="display: flex; justify-content: space-between; margin-top: 30px;">
+      <a href="../index.html" style="color: var(--primary);">← 返回首页</a>
+      <a href="react-hooks.html" style="color: var(--primary);">下一篇: React Hooks 完全指南 →</a>
+    </div>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-info">
+          <h3>王力的博客日志</h3>
+          <p>记录学习，分享知识，共同进步</p>
+        </div>
+        <div class="footer-links">
+          <a href="../index.html">首页</a>
+          <a href="../categories.html">分类</a>
+          <a href="../about.html">关于</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 王力的博客日志. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 回到顶部 -->
+  <button class="back-to-top" id="backToTop" onclick="scrollToTop()">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+      <path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/>
+    </svg>
+  </button>
+
+  <script src="../js/main.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+</body>
+</html>

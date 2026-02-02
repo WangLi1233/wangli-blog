@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>关于我 - 王力的博客日志</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- 导航栏 -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">W</span>
+        <span class="logo-text">王力的博客日志</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html">首页</a></li>
+        <li><a href="categories.html">分类</a></li>
+        <li><a href="about.html" class="active">关于我</a></li>
+        <li><a href="https://github.com" target="_blank">GitHub</a></li>
+      </ul>
+      <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- 移动端菜单 -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">首页</a>
+    <a href="categories.html">分类</a>
+    <a href="about.html">关于我</a>
+    <a href="https://github.com" target="_blank">GitHub</a>
+  </div>
+
+  <!-- 页面头部 -->
+  <header class="page-header">
+    <h1>关于我</h1>
+    <p>了解博主的更多信息</p>
+  </header>
+
+  <!-- 关于内容 -->
+  <main class="about-content">
+    <section class="about-section">
+      <h2>个人简介</h2>
+      <p>
+        大家好，我是王力，一名热爱前端开发的工程师。
+      </p>
+      <p>
+        我热衷于学习和探索前端技术，从原生 JavaScript 到 React、Vue 等现代框架，
+        不断追求技术的深度和广度。创建这个博客的初衷是记录自己的学习历程，
+        同时也希望能够帮助到其他正在学习前端的朋友。
+      </p>
+      <p>
+        "学无止境，保持好奇" 是我的座右铭。希望在这里与你分享知识，共同进步。
+      </p>
+    </section>
+
+    <section class="about-section">
+      <h2>技术栈</h2>
+      <p>以下是我日常使用和学习的技术：</p>
+      <div class="skill-list">
+        <span>JavaScript</span>
+        <span>TypeScript</span>
+        <span>React</span>
+        <span>Vue.js</span>
+        <span>Node.js</span>
+        <span>HTML5</span>
+        <span>CSS3</span>
+        <span>Sass/Less</span>
+        <span>Webpack</span>
+        <span>Vite</span>
+        <span>Git</span>
+        <span>RESTful API</span>
+      </div>
+    </section>
+
+    <section class="about-section">
+      <h2>博客内容</h2>
+      <p>
+        本博客主要分享以下内容：
+      </p>
+      <ul style="margin-left: 20px; margin-top: 15px; color: var(--gray);">
+        <li style="margin-bottom: 10px;">JavaScript 核心知识与高级技巧</li>
+        <li style="margin-bottom: 10px;">React 生态系统学习笔记</li>
+        <li style="margin-bottom: 10px;">Vue.js 框架深入解析</li>
+        <li style="margin-bottom: 10px;">前端性能优化实践</li>
+        <li style="margin-bottom: 10px;">前端工程化与最佳实践</li>
+        <li style="margin-bottom: 10px;">面试题解析与经验分享</li>
+      </ul>
+    </section>
+
+    <section class="about-section">
+      <h2>联系方式</h2>
+      <p>
+        如果你有任何问题或建议，欢迎通过以下方式联系我：
+      </p>
+      <ul style="margin-left: 20px; margin-top: 15px; color: var(--gray);">
+        <li style="margin-bottom: 10px;">GitHub: <a href="https://github.com" target="_blank">github.com/wangli</a></li>
+        <li style="margin-bottom: 10px;">Email: wangli@example.com</li>
+      </ul>
+    </section>
+
+    <section class="about-section">
+      <h2>版权声明</h2>
+      <p>
+        本博客所有原创文章采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 协议。
+        转载请注明出处，并保留原文链接。
+      </p>
+    </section>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-info">
+          <h3>王力的博客日志</h3>
+          <p>记录学习，分享知识，共同进步</p>
+        </div>
+        <div class="footer-links">
+          <a href="index.html">首页</a>
+          <a href="categories.html">分类</a>
+          <a href="about.html">关于</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 王力的博客日志. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 回到顶部 -->
+  <button class="back-to-top" id="backToTop" onclick="scrollToTop()">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+      <path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/>
+    </svg>
+  </button>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
